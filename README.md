@@ -19,7 +19,7 @@ El objetivo es construir un backend completo desde cero, agregando capas de comp
 - [x] CRUD Productos
 
 ### 🔄 Fase 2 — Entidades
-- [ ] CRUD Clientes
+- [x] CRUD Clientes
 - [ ] CRUD Vendedores
 - [ ] Relaciones entre entidades
 - [ ] Migraciones con Alembic
