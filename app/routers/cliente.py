@@ -23,6 +23,10 @@ def get_cliente(id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ClienteResponse, status_code=201)
 def create_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
+    email_exists = db.query(Cliente).filter(Cliente.email == cliente.email).first()
+    if email_exists:
+        raise HTTPException(status_code=400, detail="El email ya está registrado")
+        
     db_cliente = Cliente(**cliente.model_dump())
     db.add(db_cliente)
     db.commit()
@@ -35,6 +39,12 @@ def update_cliente(id: int, cliente: ClienteUpdate, db: Session = Depends(get_db
     db_cliente = db.query(Cliente).filter(Cliente.id == id).first()
     if not db_cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    
+    if cliente.email:
+        email_exists = db.query(Cliente).filter(Cliente.email == cliente.email, Cliente.id != id).first()
+        if email_exists:
+            raise HTTPException(status_code=400, detail="El email ya está registrado")
+            
     for key, value in cliente.model_dump(exclude_none=True).items():
         setattr(db_cliente, key, value)
     db.commit()
