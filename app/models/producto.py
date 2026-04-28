@@ -13,3 +13,4 @@ class Producto(Base):
     id_vendedor = Column(Integer, ForeignKey("vendedores.id", ondelete="CASCADE"), nullable=False)
 
     vendedor = relationship("Vendedor", back_populates="productos")
+    pedidos = relationship("PedidoProducto", back_populates="producto")

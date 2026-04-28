@@ -56,12 +56,17 @@ def update_producto(id: int, producto: ProductoUpdate, db: Session = Depends(get
     db.refresh(db_producto)
     return db_producto
 
+from sqlalchemy.exc import IntegrityError
+
 @router.delete("/{id}", status_code=204)
 def delete_producto(id: int, db: Session = Depends(get_db)):
-
-    # Verificar que el producto exista
     db_producto = get_or_404(db, Producto, id, "Producto no encontrado")
-    
-    # Eliminar Producto
-    db.delete(db_producto)
-    db.commit()
+    try:
+        db.delete(db_producto)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail="No se puede eliminar un producto que tiene pedidos asociados"
+        )
