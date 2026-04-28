@@ -17,9 +17,13 @@ def get_productos(db: Session = Depends(get_db)):
 
 @router.get("/{id}", response_model=ProductoResponse)
 def get_producto(id: int, db: Session = Depends(get_db)):
+
+    # Verificar que el Producto exista
     producto = db.query(Producto).filter(Producto.id == id).first()
     if not producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
+
+    # Retornar Producto
     return producto
 
 @router.post("/", response_model=ProductoResponse, status_code=201)
@@ -30,8 +34,8 @@ def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
     if not vendedor_existe:
         raise HTTPException(status_code=404, detail="El ID del vendedor no existe")
     
+    # Crear Producto
     db_producto = Producto(**producto.model_dump())
-
     db.add(db_producto)
     db.commit()
     db.refresh(db_producto)
@@ -60,8 +64,12 @@ def update_producto(id: int, producto: ProductoUpdate, db: Session = Depends(get
 
 @router.delete("/{id}", status_code=204)
 def delete_producto(id: int, db: Session = Depends(get_db)):
+
+    # Verificar que el producto exista
     db_producto = db.query(Producto).filter(Producto.id == id).first()
     if not db_producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
+    
+    # Eliminar Producto
     db.delete(db_producto)
     db.commit()
