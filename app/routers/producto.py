@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.models.producto import Producto
+from app.models.vendedor import Vendedor
 from app.schemas.producto import ProductoCreate, ProductoUpdate, ProductoResponse
 from typing import List
 
@@ -23,7 +24,14 @@ def get_producto(id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=ProductoResponse, status_code=201)
 def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
+    
+    # Verificar si el vendedor existe mediante su ID
+    vendedor_existe = db.query(Vendedor).filter(Vendedor.id == producto.id_vendedor).first()
+    if not vendedor_existe:
+        raise HTTPException(status_code=404, detail="El ID del vendedor no existe")
+    
     db_producto = Producto(**producto.model_dump())
+
     db.add(db_producto)
     db.commit()
     db.refresh(db_producto)
@@ -31,9 +39,19 @@ def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
 
 @router.patch("/{id}", response_model=ProductoResponse)
 def update_producto(id: int, producto: ProductoUpdate, db: Session = Depends(get_db)):
+
+    # Verificar que el producto exista
     db_producto = db.query(Producto).filter(Producto.id == id).first()
     if not db_producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
+
+    # Verificar si el vendedor existe mediante su ID, solo si lo actualizarán
+    if producto.id_vendedor is not None:
+        vendedor_existe = db.query(Vendedor).filter(Vendedor.id == producto.id_vendedor).first()
+        if not vendedor_existe:
+            raise HTTPException(status_code=404, detail="El ID del vendedor no existe")
+
+    # Actualizar producto
     for key, value in producto.model_dump(exclude_none=True).items():
         setattr(db_producto, key, value)
     db.commit()

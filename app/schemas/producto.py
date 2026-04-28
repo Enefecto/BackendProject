@@ -6,6 +6,7 @@ class ProductoBase(BaseModel):
     descripcion: Optional[str] = None
     precio: float
     stock: int = 0
+    id_vendedor: int
 
 class ProductoCreate(ProductoBase):
     pass
@@ -15,6 +16,7 @@ class ProductoUpdate(BaseModel):
     descripcion: Optional[str] = None
     precio: Optional[float] = None
     stock: Optional[int] = None
+    id_vendedor: Optional[int] = None
 
 class ProductoResponse(ProductoBase):
     id: int
