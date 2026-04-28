@@ -4,6 +4,7 @@ from app.db import get_db
 from app.models.cliente import Cliente
 from app.schemas.cliente import ClienteCreate, ClienteUpdate, ClienteResponse
 from typing import List
+from app.utils.helpers import get_or_404
 
 router = APIRouter(
     prefix="/clientes",
@@ -17,13 +18,8 @@ def get_clientes(db: Session = Depends(get_db)):
 @router.get("/{id}", response_model=ClienteResponse)
 def get_cliente(id: int, db: Session = Depends(get_db)):
 
-    # Verificar que el Cliente exista
-    cliente = db.query(Cliente).filter(Cliente.id == id).first()
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    
-    # Retornar Cliente
-    return cliente
+    # Verificar y retornar si existe el Cliente
+    return get_or_404(db, Cliente, id, "Cliente no encontrado")
 
 @router.post("/", response_model=ClienteResponse, status_code=201)
 def create_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
@@ -50,9 +46,7 @@ def update_cliente(id: int, cliente: ClienteUpdate, db: Session = Depends(get_db
 )):
 
     # Verificar que el Cliente exista
-    db_cliente = db.query(Cliente).filter(Cliente.id == id).first()
-    if not db_cliente:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    db_cliente = get_or_404(db, Cliente, id, "Cliente no encontrado")
     
     # Verificar que el Email no exista en otros Clientes ignorando el del propetario
     if cliente.email:
@@ -77,11 +71,8 @@ def update_cliente(id: int, cliente: ClienteUpdate, db: Session = Depends(get_db
 def delete_cliente(id: int, db: Session = Depends(get_db)):
 
     # Verificar que el Cliente exista
-    db_cliente = db.query(Cliente).filter(Cliente.id == id).first()
-    if not db_cliente:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    db_cliente = get_or_404(db, Cliente, id, "Cliente no encontrado")
     
     # Eliminar Cliente
     db.delete(db_cliente)
     db.commit()
-

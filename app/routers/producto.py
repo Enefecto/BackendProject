@@ -5,6 +5,7 @@ from app.models.producto import Producto
 from app.models.vendedor import Vendedor
 from app.schemas.producto import ProductoCreate, ProductoUpdate, ProductoResponse
 from typing import List
+from app.utils.helpers import get_or_404
 
 router = APIRouter(
     prefix="/productos",
@@ -18,13 +19,8 @@ def get_productos(db: Session = Depends(get_db)):
 @router.get("/{id}", response_model=ProductoResponse)
 def get_producto(id: int, db: Session = Depends(get_db)):
 
-    # Verificar que el Producto exista
-    producto = db.query(Producto).filter(Producto.id == id).first()
-    if not producto:
-        raise HTTPException(status_code=404, detail="Producto no encontrado")
-
-    # Retornar Producto
-    return producto
+    # Verificar y retornar si existe el Producto
+    return get_or_404(db, Producto, id, "Producto no encontrado")
 
 @router.post("/", response_model=ProductoResponse, status_code=201)
 def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
@@ -45,9 +41,7 @@ def create_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
 def update_producto(id: int, producto: ProductoUpdate, db: Session = Depends(get_db)):
 
     # Verificar que el producto exista
-    db_producto = db.query(Producto).filter(Producto.id == id).first()
-    if not db_producto:
-        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    db_producto = get_or_404(db, Producto, id, "Producto no encontrado")
 
     # Verificar si el vendedor existe mediante su ID, solo si lo actualizarán
     if producto.id_vendedor is not None:
@@ -66,9 +60,7 @@ def update_producto(id: int, producto: ProductoUpdate, db: Session = Depends(get
 def delete_producto(id: int, db: Session = Depends(get_db)):
 
     # Verificar que el producto exista
-    db_producto = db.query(Producto).filter(Producto.id == id).first()
-    if not db_producto:
-        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    db_producto = get_or_404(db, Producto, id, "Producto no encontrado")
     
     # Eliminar Producto
     db.delete(db_producto)

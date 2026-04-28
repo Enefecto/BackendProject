@@ -4,6 +4,7 @@ from app.db import get_db
 from app.models.vendedor import Vendedor
 from app.schemas.vendedor import VendedorCreate, VendedorUpdate, VendedorResponse
 from typing import List
+from app.utils.helpers import get_or_404
 
 router = APIRouter(
     prefix="/vendedores",
@@ -16,13 +17,9 @@ def get_vendedores(db: Session = Depends(get_db)):
 
 @router.get("/{id}", response_model=VendedorResponse)
 def get_vendedor(id: int, db: Session = Depends(get_db)):
-    # Verificar que el Vendedor exista
-    vendedor = db.query(Vendedor).filter(Vendedor.id == id).first()
-    if not vendedor:
-        raise HTTPException(status_code=404, detail="Vendedor no encontrado")
     
-    # Retornar Vendedor
-    return vendedor
+    # Verificar y retornar si existe el Vendedor
+    return get_or_404(db, Vendedor, id, "Vendedor no encontrado")
 
 @router.post("/", response_model=VendedorResponse, status_code=201)
 def create_vendedor(vendedor: VendedorCreate, db: Session = Depends(get_db)):
@@ -49,9 +46,7 @@ def create_vendedor(vendedor: VendedorCreate, db: Session = Depends(get_db)):
 def update_vendedor(id: int, vendedor: VendedorUpdate, db: Session = Depends(get_db)):
 
     # Verificar que el id del Vendedor exista
-    db_vendedor = db.query(Vendedor).filter(Vendedor.id == id).first()
-    if not db_vendedor:
-        raise HTTPException(status_code=404, detail="Vendedor no encontrado")
+    db_vendedor = get_or_404(db, Vendedor, id, "Vendedor no encontrado")
 
     # Verificar que el email no existe en otros Vendedores ignorando el del propetario
     if vendedor.email:
@@ -76,9 +71,7 @@ def update_vendedor(id: int, vendedor: VendedorUpdate, db: Session = Depends(get
 def delete_vendedor(id: int, db: Session = Depends(get_db)):
 
     # Verificar que el Vendedor exista antes de eliminar
-    db_vendedor = db.query(Vendedor).filter(Vendedor.id == id).first()
-    if not db_vendedor:
-        raise HTTPException(status_code=404, detail="Vendedor no encontrado")
+    db_vendedor = get_or_404(db, Vendedor, id, "Vendedor no encontrado")
     
     # Eliminar
     db.delete(db_vendedor)
