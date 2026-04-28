@@ -8,7 +8,7 @@ class Vendedor(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
-    telefono = Column(String)
+    telefono = Column(String, unique=True)
     zona = Column(String)
 
     productos = relationship("Producto", back_populates="vendedor", cascade="all, delete-orphan")
