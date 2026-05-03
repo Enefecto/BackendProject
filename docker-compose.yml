@@ -5,6 +5,7 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/code/app
+      - ./migrations:/code/migrations
     env_file:
       - .env
     depends_on:
