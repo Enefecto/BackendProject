@@ -18,13 +18,23 @@ El objetivo es construir un backend completo desde cero, agregando capas de comp
 - [x] FastAPI + Docker + PostgreSQL
 - [x] CRUD Productos
 
-### 🔄 Fase 2 — Entidades
+### ✅ Fase 2 — Entidades
 - [x] CRUD Clientes
 - [x] CRUD Vendedores
 - [x] Relaciones entre entidades
 - [x] Migraciones con Alembic
 
-### 🔄 Fase 3 — Auth & Seguridad
+### 🔄 Fase 3 — Testing
+- [ ] Seeders con datos de ejemplo
+- [ ] Configuración de Pytest
+- [ ] Base de datos de testing
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] Test de endpoints
+- [ ] Mocking de base de datos
+- [ ] Coverage reports
+
+### 🔄 Fase 4 — Auth & Seguridad
 - [ ] JWT Authentication
 - [ ] Register / Login
 - [ ] Refresh tokens
@@ -35,7 +45,7 @@ El objetivo es construir un backend completo desde cero, agregando capas de comp
 - [ ] Variables de entorno seguras
 - [ ] HTTPS / SSL
 
-### 🔄 Fase 4 — Rate Limiting & Protección
+### 🔄 Fase 5 — Rate Limiting & Protección
 - [ ] Rate limiting por IP
 - [ ] Rate limiting por usuario
 - [ ] Protección contra fuerza bruta en login
@@ -45,7 +55,7 @@ El objetivo es construir un backend completo desde cero, agregando capas de comp
 - [ ] Headers de seguridad (Helmet equivalent)
 - [ ] CSRF Protection
 
-### 🔄 Fase 5 — Performance & Cache
+### 🔄 Fase 6 — Performance & Cache
 - [ ] Redis Cache
 - [ ] Cache de queries frecuentes
 - [ ] Paginación
@@ -53,14 +63,6 @@ El objetivo es construir un backend completo desde cero, agregando capas de comp
 - [ ] Ordenamiento
 - [ ] Query optimization
 - [ ] Connection pooling
-
-### 🔄 Fase 6 — Testing
-- [ ] Unit tests con Pytest
-- [ ] Integration tests
-- [ ] Test de endpoints
-- [ ] Mocking de base de datos
-- [ ] Coverage reports
-- [ ] Test en CI/CD pipeline
 
 ### 🔄 Fase 7 — DevOps & CI/CD
 - [ ] GitHub Actions pipeline
